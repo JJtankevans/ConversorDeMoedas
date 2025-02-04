@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffff</color>
+    <color name="puple_base">#7C3AED</color>
+    <color name="puple_light">#EDE9FE</color>
+    <color name="gray_100">#000000</color>
+    <color name="gray_200">#334155</color>
+    <color name="gray_300">#94A3B8</color>
+    <color name="gray_400">#F8FAFC</color>
+</resources>

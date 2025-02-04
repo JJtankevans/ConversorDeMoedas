@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Inter title -->
+    <style name="TextAppearance.Inter.Title">
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <!-- Line height equivalent: 24sp(150%) -->
+        <item name="android:lineSpacingExtra">4sp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+    </style>
+
+    <!-- Body Medium -->
+    <style name="TextAppearance.Inter.Medium">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- Body Small -->
+    <style name="TextAppearance.Inter.Small">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>
