@@ -57,49 +57,87 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvContentTitle" />
 
             <LinearLayout
-                android:id="@+id/llFrom"
+                android:id="@+id/llFromExchange"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="8dp"
                 android:layout_marginTop="36dp"
                 android:background="@drawable/bg_rounded_content"
+                android:weightSum="7"
+                android:gravity="center"
                 app:layout_constraintTop_toBottomOf="@+id/tvSubtitle"
-                app:layout_constraintBottom_toTopOf="@+id/ivExchange"
+                app:layout_constraintBottom_toTopOf="@+id/ivArrowsExchange"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" >
-                <TextView
-                    android:layout_width="match_parent"
+
+                <EditText
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="R$ 1.000,00" />
+                    android:layout_weight="4"
+                    android:minHeight="48dp"
+                    android:inputType="number"
+                    android:importantForAutofill="no"
+                    tools:text="R$ 1.000,00"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_divider" />
+
+                <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    tools:listitem="@layout/item_currency_type"
+                    android:layout_weight="3" />
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/ivExchange"
+                android:id="@+id/ivArrowsExchange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_margin="8dp"
                 android:src="@drawable/ic_arrows_exchange"
-                app:layout_constraintTop_toBottomOf="@+id/llFrom"
-                app:layout_constraintBottom_toTopOf="@+id/llTo"
+                app:layout_constraintTop_toBottomOf="@+id/llFromExchange"
+                app:layout_constraintBottom_toTopOf="@+id/llToExchange"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
             <LinearLayout
-                android:id="@+id/llTo"
+                android:id="@+id/llToExchange"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="8dp"
+                android:gravity="center"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/bg_rounded_content"
-                app:layout_constraintTop_toBottomOf="@+id/ivExchange"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" >
-                <TextView
-                    android:layout_width="match_parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+                <EditText
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="R$ 1.000,00" />
+                    android:layout_weight="4"
+                    android:minHeight="48dp"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    tools:text="R$ 1.000,00"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_divider" />
+
+                <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    tools:listitem="@layout/item_currency_type"
+                    android:layout_weight="3" />
             </LinearLayout>
 
 
