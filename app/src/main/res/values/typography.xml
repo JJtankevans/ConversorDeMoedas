@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Inter title -->
-    <style name="TextAppearance.Inter.Title">
+    <style name="TextAppearance.Inter.Title" parent="TextAppearance.MaterialComponents.Body1">
         <item name="fontFamily">@font/inter_semibold</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
@@ -11,13 +11,13 @@
     </style>
 
     <!-- Body Medium -->
-    <style name="TextAppearance.Inter.Medium">
+    <style name="TextAppearance.Inter.Medium" parent="TextAppearance.Material3.BodyMedium">
         <item name="fontFamily">@font/inter</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <!-- Body Small -->
-    <style name="TextAppearance.Inter.Small">
+    <style name="TextAppearance.Inter.Small" parent="TextAppearance.Material3.BodySmall">
         <item name="fontFamily">@font/inter</item>
         <item name="android:textSize">14sp</item>
     </style>
