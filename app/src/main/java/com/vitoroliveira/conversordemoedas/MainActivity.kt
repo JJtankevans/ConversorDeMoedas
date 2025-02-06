@@ -1,13 +1,22 @@
 package com.vitoroliveira.conversordemoedas
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.vitoroliveira.conversordemoedas.network.KtorHttpClient
+import com.vitoroliveira.conversordemoedas.viewmodel.CurrencyExchangeViewModel
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
+    private val viewModel by viewModels<CurrencyExchangeViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -18,6 +27,33 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val ktorHttpCLient = KtorHttpClient
+        lifecycleScope.apply {
+            launch {
+                viewModel.currencyTypes.collect{ result ->
+                    result.onSuccess {
+                        Toast.makeText(
+                            this@MainActivity,
+                            it.size.toString(),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }.onFailure {
+                        Toast.makeText(
+                            this@MainActivity,
+                            it.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+            launch {
+                viewModel.exchangeRate.collect { result ->
+                    result.onSuccess {
+                        Log.d("MainActivity", it.toString())
+                    }.onFailure {
+                        Log.d("MainActivity", it.message.toString())
+                    }
+                }
+            }
+        }
     }
 }
