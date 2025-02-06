@@ -9,18 +9,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.vitoroliveira.conversordemoedas.network.KtorHttpClient
+import com.vitoroliveira.conversordemoedas.databinding.ActivityMainBinding
+import com.vitoroliveira.conversordemoedas.ui.CurrencyTypesAdapter
 import com.vitoroliveira.conversordemoedas.viewmodel.CurrencyExchangeViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
 
     private val viewModel by viewModels<CurrencyExchangeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -30,12 +35,9 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.apply {
             launch {
                 viewModel.currencyTypes.collect{ result ->
-                    result.onSuccess {
-                        Toast.makeText(
-                            this@MainActivity,
-                            it.size.toString(),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    result.onSuccess { currencyTypesList ->
+                        binding.spnFromExchange.adapter = CurrencyTypesAdapter(currencyTypesList)
+                        binding.spnToExchange.adapter = CurrencyTypesAdapter(currencyTypesList)
                     }.onFailure {
                         Toast.makeText(
                             this@MainActivity,

@@ -25,7 +25,7 @@ class CurrencyExchangeViewModel: ViewModel() {
                 result.values
             }
 
-            _exchangeRate.value = KtorHttpClient.getCurrencyExchange(from = "BRL", to = "USD")
+            _exchangeRate.value = KtorHttpClient.getExchangeRate(from = "BRL", to = "USD")
         }
     }
 }

@@ -24,7 +24,7 @@ object KtorHttpClient {
         return requireGet(url = "$BASE_URL/currency_types")
     }
 
-    suspend fun getCurrencyExchange(from: String, to: String): Result<ExchangeRateResult> {
+    suspend fun getExchangeRate(from: String, to: String): Result<ExchangeRateResult> {
         return requireGet(url = "$BASE_URL/exchange_rate/$from/$to")
     }
 
