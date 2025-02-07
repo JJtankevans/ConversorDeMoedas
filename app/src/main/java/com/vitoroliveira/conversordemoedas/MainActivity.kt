@@ -5,7 +5,6 @@ import android.icu.text.DecimalFormatSymbols
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.EditText
@@ -27,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val viewModel by viewModels<CurrencyExchangeViewModel>()
+
+    private var exchangeRate: Double? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,10 +67,17 @@ class MainActivity : AppCompatActivity() {
             }
             launch {
                 viewModel.exchangeRate.collect { result ->
-                    result.onSuccess {
-                        Log.d("MainActivity", it.toString())
+                    result.onSuccess { currencyExchangeData ->
+                        currencyExchangeData?.let {
+                            exchangeRate = currencyExchangeData.exchangeRate
+                            binding.generateConvertedValue()
+                        }
                     }.onFailure {
-                        Log.d("MainActivity", it.message.toString())
+                        Toast.makeText(
+                            this@MainActivity,
+                            it.message,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
@@ -141,6 +149,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun ActivityMainBinding.generateConvertedValue() {
+        exchangeRate?.let {
+            val cleanedString = etFromExchangeValue.text.toString().replace("[,.]".toRegex(), "")
+            val currencyValue = cleanedString.toDoubleOrNull() ?: 0.0
+
+
+            val formattedValue = DecimalFormat(
+                "#,##0.00",
+                DecimalFormatSymbols(Locale.getDefault())
+            ).format((currencyValue * it / 100))
+
+            tvToExchangeValue.text = formattedValue
+        }
+    }
+
     private fun EditText.addCurrencyMask() {
         addTextChangedListener(object : TextWatcher {
             private var currentText = ""
@@ -149,7 +172,7 @@ class MainActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
-                if(s.toString() != currentText) {
+                if (s.toString() != currentText) {
                     removeTextChangedListener(this)
 
                     val cleanedString = s.toString().replace("[,.]".toRegex(), "")
@@ -163,6 +186,8 @@ class MainActivity : AppCompatActivity() {
                     currentText = formattedValue
                     setText(formattedValue)
                     setSelection(formattedValue.length)
+
+                    binding.generateConvertedValue()
 
                     addTextChangedListener(this)
                 }
