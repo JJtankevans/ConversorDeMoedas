@@ -51,7 +51,6 @@
                 android:text="@string/digite_o_valor"
                 android:layout_marginTop="8dp"
                 android:textAppearance="@style/TextAppearance.Inter.Small"
-                android:textColor="@color/gray_200"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvContentTitle" />
@@ -70,16 +69,29 @@
                 app:layout_constraintBottom_toTopOf="@+id/ivArrowsExchange"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" >
-
-                <EditText
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:minHeight="48dp"
-                    android:inputType="number"
-                    android:importantForAutofill="no"
-                    tools:text="R$ 1.000,00"
-                    android:background="@android:color/transparent" />
+                    android:layout_weight="4">
+                    <TextView
+                        android:id="@+id/tvFromCurrencySymbol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        tools:text="R$"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/etFromExchangeValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:inputType="number"
+                        android:importantForAutofill="no"
+                        android:text="@string/_1_000_00"
+                        android:background="@android:color/transparent" />
+                </LinearLayout>
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -117,15 +129,26 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
-                <EditText
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:minHeight="48dp"
-                    android:importantForAutofill="no"
-                    android:inputType="number"
-                    tools:text="R$ 1.000,00"
-                    android:background="@android:color/transparent" />
+                    android:layout_weight="4">
+                    <TextView
+                        android:id="@+id/tvToCurrencySymbol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        tools:text="R$"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvToExchangeValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:gravity="center_vertical"
+                        android:text="@string/_1_000_00" />
+                </LinearLayout>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -23,6 +23,7 @@ class CurrencyExchangeViewModel: ViewModel() {
 
     fun requireCurrencyTypes() {
         viewModelScope.launch {
+            /* Faz a busca dos dados e atualiza o estado dos mesmo caso seja sucesso */
             _currencyTypes.value = KtorHttpClient.getCurrencyTypes().mapCatching { result ->
                 result.values
             }
