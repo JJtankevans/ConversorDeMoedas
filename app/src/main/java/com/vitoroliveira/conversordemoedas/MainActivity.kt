@@ -2,6 +2,8 @@ package com.vitoroliveira.conversordemoedas
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -10,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.vitoroliveira.conversordemoedas.databinding.ActivityMainBinding
+import com.vitoroliveira.conversordemoedas.network.model.CurrencyType
 import com.vitoroliveira.conversordemoedas.ui.CurrencyTypesAdapter
 import com.vitoroliveira.conversordemoedas.viewmodel.CurrencyExchangeViewModel
 import kotlinx.coroutines.launch
@@ -32,12 +35,13 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        viewModel.requireCurrencyTypes()
+
         lifecycleScope.apply {
             launch {
-                viewModel.currencyTypes.collect{ result ->
+                viewModel.currencyTypes.collect { result ->
                     result.onSuccess { currencyTypesList ->
-                        binding.spnFromExchange.adapter = CurrencyTypesAdapter(currencyTypesList)
-                        binding.spnToExchange.adapter = CurrencyTypesAdapter(currencyTypesList)
+                        binding.configureCurrencyTypeSpinners(currencyTypes = currencyTypesList)
                     }.onFailure {
                         Toast.makeText(
                             this@MainActivity,
@@ -55,6 +59,60 @@ class MainActivity : AppCompatActivity() {
                         Log.d("MainActivity", it.message.toString())
                     }
                 }
+            }
+        }
+    }
+
+    private fun ActivityMainBinding.configureCurrencyTypeSpinners(currencyTypes: List<CurrencyType>) {
+        spnFromExchange.apply {
+            adapter = CurrencyTypesAdapter(currencyTypes)
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val from = currencyTypes[position]
+                    val to = currencyTypes[spnToExchange.selectedItemPosition]
+
+                    viewModel.requireExchangeRate(
+                        from = from.acronym,
+                        to = to.acronym
+                    )
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
+
+            }
+        }
+        spnToExchange.apply {
+            adapter = CurrencyTypesAdapter(currencyTypes)
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val from = currencyTypes[spnFromExchange.selectedItemPosition]
+                    val to = currencyTypes[position]
+
+                    viewModel.requireExchangeRate(
+                        from = from.acronym,
+                        to = to.acronym
+                    )
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    currencyTypes.firstOrNull()?.let { firstCurrencyType ->
+                        viewModel.requireExchangeRate(
+                            from = firstCurrencyType.acronym,
+                            to = firstCurrencyType.acronym
+                        )
+                    }
+                }
+
             }
         }
     }
