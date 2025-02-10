@@ -16,9 +16,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.vitoroliveira.conversordemoedas.databinding.ActivityMainBinding
+import com.vitoroliveira.conversordemoedas.databinding.ContentExchangeRateSuccessBinding
 import com.vitoroliveira.conversordemoedas.network.model.CurrencyType
+import com.vitoroliveira.conversordemoedas.network.model.ExchangeRateResult
 import com.vitoroliveira.conversordemoedas.ui.CurrencyTypesAdapter
 import com.vitoroliveira.conversordemoedas.viewmodel.CurrencyExchangeViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -42,42 +45,45 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        /* Chama a funcao que vai buscar os tipos de moedas no viewModel
+        with(binding) {
+            /* Chama a funcao que vai buscar os tipos de moedas no viewModel
         * e CASO tenha sucesso ao buscar as moedas é feita a atualizaçao
         * do estado */
-        viewModel.requireCurrencyTypes()
-        binding.etFromExchangeValue.addCurrencyMask()
+            viewModel.requireCurrencyTypes()
+            binding.icLayoutSuccess.etFromExchangeValue.addCurrencyMask()
 
-        /**/
-        lifecycleScope.apply {
-            launch {
-                /* Observa o estado das moedas e caso tenha atualizaçao
-                * chama a funcao de extensao passando a nova listagem de moedas */
-                viewModel.currencyTypes.collect { result ->
-                    result.onSuccess { currencyTypesList ->
-                        binding.configureCurrencyTypeSpinners(currencyTypes = currencyTypesList)
-                    }.onFailure {
-                        Toast.makeText(
-                            this@MainActivity,
-                            it.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
+            icLayoutError.btnTryAgain.setOnClickListener {
+                showContentLoading()
+                viewModel.requireCurrencyTypes()
+            }
+
+
+            /**/
+            lifecycleScope.apply {
+                launch {
+                    /* Observa o estado das moedas e caso tenha atualizaçao
+                    * chama a funcao de extensao passando a nova listagem de moedas */
+                    viewModel.currencyTypes.collectLatest { result ->
+                        result.onSuccess { currencyTypesList ->
+                            showContentSuccess()
+                            icLayoutSuccess.configureCurrencyTypeSpinners(currencyTypes = currencyTypesList)
+                        }.onFailure {
+                            showContentError()
+                        }
                     }
                 }
-            }
-            launch {
-                viewModel.exchangeRate.collect { result ->
-                    result.onSuccess { currencyExchangeData ->
-                        currencyExchangeData?.let {
+                launch {
+                    viewModel.exchangeRate.collectLatest { result ->
+                        result.onSuccess { currencyExchangeData ->
+                            if(currencyExchangeData == ExchangeRateResult.empty())
+                                return@collectLatest
+
+                            showContentSuccess()
                             exchangeRate = currencyExchangeData.exchangeRate
-                            binding.generateConvertedValue()
+                            icLayoutSuccess.generateConvertedValue()
+                        }.onFailure {
+                            showContentError()
                         }
-                    }.onFailure {
-                        Toast.makeText(
-                            this@MainActivity,
-                            it.message,
-                            Toast.LENGTH_LONG
-                        ).show()
                     }
                 }
             }
@@ -85,7 +91,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /* Funcao de extensao para ter acesso aos ids dos spinners */
-    private fun ActivityMainBinding.configureCurrencyTypeSpinners(currencyTypes: List<CurrencyType>) {
+    private fun ContentExchangeRateSuccessBinding.configureCurrencyTypeSpinners(currencyTypes: List<CurrencyType>) {
         spnFromExchange.apply {
             //Atualiza a lista de moedas recebidas
             adapter = CurrencyTypesAdapter(currencyTypes)
@@ -149,7 +155,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun ActivityMainBinding.generateConvertedValue() {
+    private fun ContentExchangeRateSuccessBinding.generateConvertedValue() {
         exchangeRate?.let {
             val cleanedString = etFromExchangeValue.text.toString().replace("[,.]".toRegex(), "")
             val currencyValue = cleanedString.toDoubleOrNull() ?: 0.0
@@ -187,11 +193,29 @@ class MainActivity : AppCompatActivity() {
                     setText(formattedValue)
                     setSelection(formattedValue.length)
 
-                    binding.generateConvertedValue()
+                    binding.icLayoutSuccess.generateConvertedValue()
 
                     addTextChangedListener(this)
                 }
             }
         })
+    }
+
+    private fun ActivityMainBinding.showContentError() {
+        icLayoutSuccess.root.visibility = View.GONE
+        icLayoutError.root.visibility = View.VISIBLE
+        pbLoading.visibility = View.GONE
+    }
+
+    private fun ActivityMainBinding.showContentSuccess() {
+        icLayoutSuccess.root.visibility = View.VISIBLE
+        icLayoutError.root.visibility = View.GONE
+        pbLoading.visibility = View.GONE
+    }
+
+    private fun ActivityMainBinding.showContentLoading() {
+        icLayoutSuccess.root.visibility = View.GONE
+        icLayoutError.root.visibility = View.GONE
+        pbLoading.visibility = View.VISIBLE
     }
 }
